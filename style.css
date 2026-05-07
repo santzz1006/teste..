@@ -1,8 +1,11 @@
 /* ==============================================
-   Camaçari na Mão — PoC de Visualização Territorial
+   Camaçari na Mão — Painel de Monitoramento
    Estilo principal da interface
-   v2: adicionado painel-direito, #insights, #ante-depois
+   v3: abas de status, toggle heatmap, fontes Montserrat/Roboto
    ============================================== */
+
+/* Importa fontes do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap');
 
 /* Reset básico */
 * {
@@ -12,7 +15,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Roboto', Arial, sans-serif;
   background-color: #f0f2f5;
   color: #333;
   height: 100vh;
@@ -47,13 +50,15 @@ header {
 }
 
 .header-title h1 {
+  font-family: 'Montserrat', sans-serif;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.2;
 }
 
 .header-title h1 span {
   display: block;
+  font-family: 'Roboto', sans-serif;
   font-size: 11px;
   font-weight: 400;
   opacity: 0.85;
@@ -70,8 +75,9 @@ header {
 }
 
 .filter-bar label {
+  font-family: 'Roboto', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -79,10 +85,11 @@ header {
   padding: 6px 10px;
   border: none;
   border-radius: 6px;
+  font-family: 'Roboto', sans-serif;
   font-size: 13px;
   background: rgba(255,255,255,0.95);
   color: #1a5c2a;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   min-width: 180px;
   outline: none;
@@ -93,9 +100,70 @@ header {
   box-shadow: 0 0 0 3px rgba(255,255,255,0.4);
 }
 
+/* ---- TOGGLE HEATMAP ---- */
+.toggle-heatmap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-heatmap label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255,255,255,0.35);
+  border-radius: 24px;
+  transition: background-color 0.3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.switch input:checked + .slider {
+  background-color: #f39c12;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
 /* Contador de resultados */
 #contador-resultados {
+  font-family: 'Roboto', sans-serif;
   font-size: 12px;
+  font-weight: 500;
   background: rgba(255,255,255,0.2);
   padding: 4px 10px;
   border-radius: 20px;
@@ -109,7 +177,7 @@ header {
   overflow: hidden;
 }
 
-/* ---- PAINEL LATERAL ESQUERDO (insights originais) ---- */
+/* ---- PAINEL LATERAL ESQUERDO ---- */
 .painel-lateral {
   width: 260px;
   background: white;
@@ -123,6 +191,7 @@ header {
 }
 
 .painel-lateral h2 {
+  font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -132,7 +201,7 @@ header {
   font-weight: 700;
 }
 
-/* ---- NOVO v2: PAINEL LATERAL DIREITO (insights SISSEDUR + ante/depois) ---- */
+/* ---- PAINEL LATERAL DIREITO ---- */
 .painel-direito {
   width: 270px;
   background: #fafafa;
@@ -147,6 +216,7 @@ header {
 }
 
 .painel-direito h2 {
+  font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -156,8 +226,109 @@ header {
   font-weight: 700;
 }
 
-/* ---- #insights: contagem por tipo (NOVO v2) ---- */
+/* ---- ABAS DE STATUS ---- */
+.abas-status {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.abas-status-titulo {
+  font-family: 'Roboto', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.aba-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: white;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  text-align: left;
+  width: 100%;
+}
+
+.aba-btn:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.aba-btn.ativa {
+  font-weight: 700;
+  color: #fff;
+  border-color: transparent;
+}
+
+.aba-btn[data-status=""] {
+  border-left: 4px solid #1a3a6c;
+}
+.aba-btn[data-status=""].ativa {
+  background: #1a3a6c;
+}
+
+.aba-btn[data-status="Aberta"] {
+  border-left: 4px solid #d4a017;
+}
+.aba-btn[data-status="Aberta"].ativa {
+  background: #d4a017;
+}
+
+.aba-btn[data-status="Em análise"] {
+  border-left: 4px solid #2471a3;
+}
+.aba-btn[data-status="Em análise"].ativa {
+  background: #2471a3;
+}
+
+.aba-btn[data-status="Encerrada"] {
+  border-left: 4px solid #1e8449;
+}
+.aba-btn[data-status="Encerrada"].ativa {
+  background: #1e8449;
+}
+
+.aba-btn .aba-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aba-btn .aba-icone {
+  font-size: 14px;
+}
+
+.aba-badge {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(0,0,0,0.12);
+  padding: 2px 8px;
+  border-radius: 12px;
+  min-width: 28px;
+  text-align: center;
+}
+
+.aba-btn.ativa .aba-badge {
+  background: rgba(255,255,255,0.25);
+}
+
+/* ---- #insights: contagem por tipo ---- */
 .insights-titulo {
+  font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 700;
   color: #1a3a6c;
@@ -165,6 +336,7 @@ header {
 }
 
 .insights-subtitulo {
+  font-family: 'Roboto', sans-serif;
   font-size: 11px;
   color: #888;
   margin-bottom: 8px;
@@ -197,6 +369,7 @@ header {
 
 .insights-nome {
   flex: 1;
+  font-family: 'Roboto', sans-serif;
   color: #444;
   font-size: 11px;
   white-space: nowrap;
@@ -205,14 +378,16 @@ header {
 }
 
 .insights-pct {
+  font-family: 'Roboto', sans-serif;
   font-size: 11px;
   color: #888;
-  font-weight: 600;
+  font-weight: 700;
   min-width: 32px;
   text-align: right;
 }
 
 .insights-num {
+  font-family: 'Montserrat', sans-serif;
   background: #1a3a6c;
   color: white;
   font-size: 11px;
@@ -221,81 +396,6 @@ header {
   border-radius: 10px;
   min-width: 26px;
   text-align: center;
-}
-
-/* ---- #ante-depois: bloco visual ETL (NOVO v2) ---- */
-.ad-bloco {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 2px;
-}
-
-.ad-label {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 5px 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.ad-label span {
-  font-weight: 400;
-  text-transform: none;
-  font-size: 10px;
-  opacity: 0.8;
-}
-
-.ad-label-antes {
-  background: #fff3cd;
-  color: #7a5200;
-  border-bottom: 1px solid #fce08a;
-}
-
-.ad-label-depois {
-  background: #d4edda;
-  color: #155724;
-  border-bottom: 1px solid #b8dfc2;
-}
-
-.ad-codigo {
-  padding: 8px 10px;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 11px;
-  line-height: 1.7;
-  background: #f8f9fa;
-}
-
-.ad-chave {
-  color: #1a3a6c;
-  font-weight: 600;
-}
-
-.ad-val-str {
-  color: #c0392b;
-}
-
-.ad-val-num {
-  color: #16a085;
-  font-weight: 600;
-}
-
-.ad-val-null {
-  color: #999;
-  font-style: italic;
-}
-
-.ad-seta {
-  text-align: center;
-  font-size: 12px;
-  font-weight: 600;
-  color: #1a3a6c;
-  background: #e8edf8;
-  padding: 5px;
-  border-radius: 4px;
-  margin: 4px 0;
-  font-family: monospace;
 }
 
 /* Card de resumo total */
@@ -308,12 +408,14 @@ header {
 }
 
 .card-total .numero {
+  font-family: 'Montserrat', sans-serif;
   font-size: 36px;
   font-weight: 800;
   line-height: 1;
 }
 
 .card-total .label {
+  font-family: 'Roboto', sans-serif;
   font-size: 11px;
   opacity: 0.85;
   margin-top: 4px;
@@ -350,8 +452,9 @@ header {
 }
 
 .insight-item .info .nome {
+  font-family: 'Roboto', sans-serif;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: #333;
   white-space: nowrap;
   overflow: hidden;
@@ -373,6 +476,7 @@ header {
 }
 
 .insight-item .qtd {
+  font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   font-weight: 800;
   color: #1a5c2a;
@@ -391,10 +495,12 @@ header {
 }
 
 .bairro-item .bairro-nome {
+  font-family: 'Roboto', sans-serif;
   color: #555;
 }
 
 .bairro-item .bairro-qtd {
+  font-family: 'Montserrat', sans-serif;
   background: #1a5c2a;
   color: white;
   font-size: 11px;
@@ -408,6 +514,7 @@ header {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-family: 'Roboto', sans-serif;
   font-size: 12px;
   padding: 3px 0;
   color: #555;
@@ -431,10 +538,11 @@ header {
 /* ---- POPUP DO MARCADOR ---- */
 .popup-denuncia {
   min-width: 180px;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Roboto', Arial, sans-serif;
 }
 
 .popup-denuncia .popup-tipo {
+  font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: white;
@@ -456,8 +564,9 @@ header {
 
 .popup-denuncia .popup-status {
   display: inline-block;
+  font-family: 'Roboto', sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 2px 8px;
   border-radius: 10px;
   margin-top: 4px;
@@ -467,10 +576,21 @@ header {
 .status-analise { background: #cce5ff; color: #004085; }
 .status-encerrada { background: #d4edda; color: #155724; }
 
+/* ---- RODAPÉ DOS PAINÉIS ---- */
+.painel-footer {
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+  color: #aaa;
+  text-align: center;
+  padding-top: 6px;
+  border-top: 1px solid #eee;
+  margin-top: auto;
+}
+
 /* ---- RESPONSIVO ---- */
 @media (max-width: 900px) {
   .painel-direito {
-    display: none; /* Oculta painel direito em telas médias */
+    display: none;
   }
 }
 

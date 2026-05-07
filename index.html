@@ -3,28 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Camaçari na Mão — PoC Visualização Territorial</title>
-
-  <!--
-    PoC — Camaçari na Mão v2
-    Pipeline SISSEDUR → Transformação → Visualização
-    Plataforma de Apoio à SEDUR | Camaçari, BA, 2026
-
-    ATUALIZAÇÃO v2:
-    - Ingestão de dados_brutos.json (simulação SISSEDUR)
-    - Transformação via transformador.js (ETL sem backend)
-    - Painel de insights (#insights) com contagem por tipo
-    - Bloco visual ANTES/DEPOIS da transformação (#ante-depois)
-  -->
-
-  <!-- Leaflet CSS (mapa base) -->
+  <title>Camaçari na Mão — Painel de Monitoramento</title>
+<link rel="icon" href="data:,">
+  <!-- Leaflet CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     crossorigin=""
   />
 
-  <!-- MarkerCluster CSS (agrupamento de pontos) -->
+  <!-- MarkerCluster CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
@@ -36,13 +24,13 @@
     crossorigin=""
   />
 
-  <!-- Estilos da PoC (inclui novos estilos v2) -->
+  <!-- Estilos principais -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <!-- =============================================
-       CABEÇALHO COM TÍTULO E FILTRO
+       CABEÇALHO
   ============================================== -->
   <header>
 
@@ -50,7 +38,7 @@
       <div class="logo">🗺️</div>
       <h1>
         Camaçari na Mão
-        <span>PoC · Pipeline SISSEDUR → Visualização Territorial · SEDUR</span>
+        <span>Painel de Monitoramento Territorial · SEDUR</span>
       </h1>
     </div>
 
@@ -61,24 +49,33 @@
       </select>
     </div>
 
+    <!-- Toggle Mapa de Calor -->
+    <div class="toggle-heatmap">
+      <label for="toggle-heat">🔥 Mapa de Calor</label>
+      <label class="switch">
+        <input type="checkbox" id="toggle-heat" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
     <div id="contador-resultados">Carregando...</div>
 
   </header>
 
 
   <!-- =============================================
-       LAYOUT PRINCIPAL: PAINEL + MAPA + PAINEL-DIREITO
+       LAYOUT PRINCIPAL
   ============================================== -->
   <div class="main-layout">
 
-    <!-- ── PAINEL LATERAL ESQUERDO (insights originais) ── -->
+    <!-- ── PAINEL LATERAL ESQUERDO ── -->
     <aside class="painel-lateral">
 
       <div>
         <h2>📊 Resumo Geral</h2>
         <div class="card-total" style="margin-top: 8px;">
           <div class="numero" id="total-ocorrencias">—</div>
-          <div class="label">Ocorrências registradas</div>
+          <div class="label">Ocorrências no filtro</div>
         </div>
       </div>
 
@@ -100,8 +97,8 @@
         </div>
       </div>
 
-      <div style="font-size: 10px; color: #aaa; text-align: center; padding-top: 6px; border-top: 1px solid #eee; margin-top: auto;">
-        Pipeline SISSEDUR · PoC 2026<br>Prefeitura de Camaçari / SEDUR
+      <div class="painel-footer">
+        Integração SISSEDUR · Prefeitura de Camaçari / SEDUR
       </div>
 
     </aside>
@@ -109,36 +106,58 @@
     <!-- ── MAPA PRINCIPAL ── -->
     <div id="map"></div>
 
-    <!-- ── NOVO: PAINEL LATERAL DIREITO (v2) ── -->
-    <!--
-      ADIÇÃO v2: Painel direito com dois blocos:
-        1. #insights      — contagem por tipo (requisito do briefing)
-        2. #ante-depois   — demonstração visual da transformação ETL
-    -->
+    <!-- ── PAINEL LATERAL DIREITO ── -->
     <aside class="painel-direito">
 
-      <!-- BLOCO 1: Painel de Insights por Tipo -->
+      <!-- BLOCO 1: Abas de filtro por status -->
       <div>
-        <h2>📡 Insights SISSEDUR</h2>
+        <h2>📋 Filtrar por Status</h2>
+        <div class="abas-status" style="margin-top: 10px;">
+          <div class="abas-status-titulo">Selecione uma situação</div>
+
+          <button class="aba-btn ativa" data-status="">
+            <span class="aba-label">
+              <span class="aba-icone">📂</span>
+              Todos
+            </span>
+            <span class="aba-badge" id="badge-todos">—</span>
+          </button>
+
+          <button class="aba-btn" data-status="Aberta">
+            <span class="aba-label">
+              <span class="aba-icone">🔴</span>
+              Abertas
+            </span>
+            <span class="aba-badge" id="badge-aberta">—</span>
+          </button>
+
+          <button class="aba-btn" data-status="Em análise">
+            <span class="aba-label">
+              <span class="aba-icone">🔵</span>
+              Em Análise
+            </span>
+            <span class="aba-badge" id="badge-analise">—</span>
+          </button>
+
+          <button class="aba-btn" data-status="Encerrada">
+            <span class="aba-label">
+              <span class="aba-icone">🟢</span>
+              Encerradas
+            </span>
+            <span class="aba-badge" id="badge-encerrada">—</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- BLOCO 2: Insights SISSEDUR por tipo -->
+      <div>
+        <h2>📡 Insights por Tipo</h2>
         <div id="insights" style="margin-top: 8px;">
-          <!-- Preenchido dinamicamente por script.js → atualizarInsights() -->
           <div style="font-size:12px; color:#aaa; text-align:center; padding:12px 0;">Carregando...</div>
         </div>
       </div>
 
-      <!-- BLOCO 2: Demonstração ANTES → DEPOIS da transformação -->
-      <div>
-        <h2>🔄 ETL: Antes → Depois</h2>
-        <p style="font-size:11px; color:#888; margin: 4px 0 8px; line-height:1.4;">
-          Exemplo real de transformação do dado bruto do SISSEDUR em registro georreferenciado.
-        </p>
-        <div id="ante-depois">
-          <!-- Preenchido dinamicamente por script.js → renderizarAnteDepois() -->
-          <div style="font-size:12px; color:#aaa; text-align:center; padding:12px 0;">Carregando...</div>
-        </div>
-      </div>
-
-      <div style="font-size: 10px; color: #aaa; text-align: center; padding-top: 6px; border-top: 1px solid #eee; margin-top: auto;">
+      <div class="painel-footer">
         transformador.js · geocodificação interna<br>sem backend · sem API key
       </div>
 
@@ -148,9 +167,8 @@
 
 
   <!-- =============================================
-       SCRIPTS (carregados ao final)
+       SCRIPTS
   ============================================== -->
-
   <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     crossorigin=""
@@ -161,10 +179,13 @@
     crossorigin=""
   ></script>
 
-  <!-- NOVO v2: Módulo de transformação (deve ser carregado ANTES do script.js) -->
+  <!-- Leaflet.heat (mapa de calor) -->
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+  <!-- Módulo de transformação (deve ser carregado ANTES do script.js) -->
   <script src="transformador.js"></script>
 
-  <!-- Lógica principal (atualizada para usar o pipeline) -->
+  <!-- Lógica principal -->
   <script src="script.js"></script>
 
 </body>

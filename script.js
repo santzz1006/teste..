@@ -1,61 +1,51 @@
 /**
- * Camaçari na Mão — PoC de Visualização Territorial
+ * Camaçari na Mão — Painel de Monitoramento Territorial
  * script.js — Lógica principal do mapa e painel de insights
  *
- * ─────────────────────────────────────────────────
- * ATUALIZAÇÃO v2 — Pipeline SISSEDUR
- * ─────────────────────────────────────────────────
- * NOVO: Ingestão de dados_brutos.json (simulação SISSEDUR)
- * NOVO: Transformação via transformador.js (ETL)
- * NOVO: Painel de insights com contagem por tipo
- * NOVO: Bloco visual ANTES/DEPOIS da transformação
- * MANTIDO: Todos os comportamentos anteriores intactos
- * ─────────────────────────────────────────────────
- *
- * Dependências (CDN):
- *   - Leaflet.js (mapa)
- *   - Leaflet.markercluster (agrupamento de pontos)
+ * v3:
+ * - Abas de filtro por status (Todos / Aberta / Em análise / Encerrada)
+ * - Toggle Mapa de Calor (Leaflet.heat)
+ * - Remoção do bloco ETL Antes/Depois
+ * - Filtros de tipo e status combinados
  */
 
 // =============================================================
 // 1. PALETA DE CORES POR TIPO DE DENÚNCIA
 // =============================================================
 const CORES_TIPO = {
-  "Obra irregular":              "#e74c3c",  // vermelho
-  "Poluição sonora":             "#f39c12",  // laranja
-  "Terreno abandonado":          "#8e44ad",  // roxo
-  "Descarte irregular de lixo":  "#16a085",  // verde-teal
-  "Ocupação irregular":          "#2980b9",  // azul
+  "Obra irregular":              "#e74c3c",
+  "Poluição sonora":             "#f39c12",
+  "Terreno abandonado":          "#8e44ad",
+  "Descarte irregular de lixo":  "#16a085",
+  "Ocupação irregular":          "#2980b9",
 };
 
-// Cor padrão para tipos não mapeados
 const COR_PADRAO = "#7f8c8d";
 
 // =============================================================
 // 2. VARIÁVEIS GLOBAIS
 // =============================================================
-let mapa;             // instância do mapa Leaflet
-let clusterGroup;     // grupo de marcadores com clustering
-let todosDados = [];  // todos os registros (após transformação)
+let mapa;
+let clusterGroup;
+let heatLayer;
+let todosDados = [];       // todos os registros transformados
+let filtroTipoAtivo = "";  // tipo selecionado no dropdown
+let filtroStatusAtivo = ""; // status selecionado nas abas
 
 // =============================================================
 // 3. INICIALIZAÇÃO DO MAPA
 // =============================================================
 function inicializarMapa() {
-  // Coordenadas do centro de Camaçari (BA)
   const CAMACARI_LAT = -12.6985;
   const CAMACARI_LNG = -38.3239;
 
-  // Cria o mapa centrado em Camaçari, zoom 13
   mapa = L.map('map').setView([CAMACARI_LAT, CAMACARI_LNG], 13);
 
-  // Camada de tiles OpenStreetMap (gratuita, sem necessidade de API key)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19
   }).addTo(mapa);
 
-  // Inicializa o grupo de clusters (MarkerCluster)
   clusterGroup = L.markerClusterGroup({
     iconCreateFunction: function(cluster) {
       const count = cluster.getChildCount();
@@ -69,6 +59,7 @@ function inicializarMapa() {
           display: flex;
           align-items: center;
           justify-content: center;
+          font-family: 'Montserrat', sans-serif;
           font-weight: 800;
           font-size: 14px;
           box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -81,6 +72,20 @@ function inicializarMapa() {
   });
 
   mapa.addLayer(clusterGroup);
+
+  // Inicializa a camada de heatmap (vazia) mas não adiciona ao mapa ainda
+  heatLayer = L.heatLayer([], {
+    radius: 30,
+    blur: 22,
+    maxZoom: 17,
+    gradient: {
+      0.2: '#3498db',
+      0.4: '#2ecc71',
+      0.6: '#f1c40f',
+      0.8: '#e67e22',
+      1.0: '#e74c3c'
+    }
+  });
 }
 
 // =============================================================
@@ -104,7 +109,18 @@ function criarIcone(cor) {
 }
 
 // =============================================================
-// 5. PLOTA OS MARCADORES NO MAPA
+// 5. RETORNA OS DADOS FILTRADOS PELOS FILTROS ATIVOS
+// =============================================================
+function getDadosFiltrados() {
+  return todosDados.filter(function(d) {
+    const passaTipo   = filtroTipoAtivo   === "" || d.tipo   === filtroTipoAtivo;
+    const passaStatus = filtroStatusAtivo === "" || d.status === filtroStatusAtivo;
+    return passaTipo && passaStatus;
+  });
+}
+
+// =============================================================
+// 6. PLOTA OS MARCADORES NO MAPA
 // =============================================================
 function plotarMarcadores(dados) {
   clusterGroup.clearLayers();
@@ -122,12 +138,10 @@ function plotarMarcadores(dados) {
       icon: criarIcone(cor)
     });
 
-    // ATUALIZADO: popup inclui endereço original quando disponível (dados SISSEDUR)
     const linhaEndereco = item.endereco
       ? `<div class="popup-linha"><strong>Endereço:</strong> ${item.endereco}</div>`
       : '';
 
-    // ATUALIZADO: badge de fonte para identificar origem SISSEDUR
     const badgeFonte = item.fonte
       ? `<div style="margin-top:6px; font-size:10px; color:#888; text-align:right;">
            📡 Fonte: ${item.fonte}
@@ -157,7 +171,6 @@ function plotarMarcadores(dados) {
     `;
 
     marcador.bindPopup(popupHTML, { maxWidth: 260 });
-
     marcador.bindTooltip(`<b>${item.tipo}</b><br>${item.bairro}`, {
       direction: 'top',
       offset: [0, -10]
@@ -171,12 +184,78 @@ function plotarMarcadores(dados) {
 }
 
 // =============================================================
-// 6. PREENCHE O DROPDOWN DE FILTRO
+// 7. ATUALIZA O HEATMAP COM OS DADOS FILTRADOS
+// =============================================================
+function atualizarHeatmap(dados) {
+  // 1. Remove a camada antiga do mapa para matar o bug do _animating
+  if (heatLayer) {
+    mapa.removeLayer(heatLayer);
+  }
+
+  // 2. Só cria uma nova se o botão de calor estiver ativado
+  const heatAtivo = document.getElementById('toggle-heat').checked;
+  if (!heatAtivo) return;
+
+  const pontos = dados.map(function(item) {
+    return [item.latitude, item.longitude, 1];
+  });
+
+  // 3. Cria a camada do ZERO toda vez e já adiciona ao mapa
+  heatLayer = L.heatLayer(pontos, {
+    radius: 30,
+    blur: 22,
+    maxZoom: 17,
+    gradient: {
+      0.2: '#3498db',
+      0.4: '#2ecc71',
+      0.6: '#f1c40f',
+      0.8: '#e67e22',
+      1.0: '#e74c3c'
+    }
+  }).addTo(mapa);
+}
+
+// =============================================================
+// 8. ALTERNA ENTRE MARCADORES E HEATMAP
+// =============================================================
+function configurarToggleHeatmap() {
+  const toggleInput = document.getElementById('toggle-heat');
+
+  toggleInput.addEventListener('change', function() {
+    if (this.checked) {
+      // Liga heatmap, desliga marcadores
+      mapa.removeLayer(clusterGroup);
+      atualizarHeatmap(getDadosFiltrados());
+    } else {
+      // Liga marcadores, desliga heatmap
+      if (heatLayer) mapa.removeLayer(heatLayer);
+      mapa.addLayer(clusterGroup);
+    }
+  });
+}
+// =============================================================
+// 9. ATUALIZA TUDO COM BASE NOS FILTROS ATIVOS
+// =============================================================
+function atualizarVisualizacao() {
+  const dados = getDadosFiltrados();
+
+  plotarMarcadores(dados);
+  atualizarPainel(dados);
+  atualizarInsights(dados);
+
+  // Atualiza o heatmap se estiver ativo
+  const heatAtivo = document.getElementById('toggle-heat').checked;
+  if (heatAtivo) {
+    atualizarHeatmap(dados);
+  }
+}
+
+// =============================================================
+// 10. PREENCHE O DROPDOWN DE FILTRO POR TIPO
 // =============================================================
 function preencherFiltro(dados) {
   const select = document.getElementById('filtro-tipo');
 
-  // Remove opções anteriores (exceto "Todos")
   while (select.options.length > 1) select.remove(1);
 
   const tipos = [...new Set(dados.map(d => d.tipo))].sort();
@@ -188,37 +267,66 @@ function preencherFiltro(dados) {
     select.appendChild(option);
   });
 
-  // Reconfigura o listener (remove duplicatas)
   const novoSelect = select.cloneNode(true);
   select.parentNode.replaceChild(novoSelect, select);
 
   novoSelect.addEventListener('change', function() {
-    const tipoSelecionado = this.value;
-    const dadosFiltrados = tipoSelecionado === ''
-      ? todosDados
-      : todosDados.filter(d => d.tipo === tipoSelecionado);
-
-    plotarMarcadores(dadosFiltrados);
-    atualizarPainel(dadosFiltrados);
-    atualizarInsights(dadosFiltrados); // NOVO: atualiza painel de insights ao filtrar
+    filtroTipoAtivo = this.value;
+    atualizarVisualizacao();
   });
 }
 
 // =============================================================
-// 7. PAINEL DE INSIGHTS (contagens por tipo e bairro)
+// 11. CONFIGURA AS ABAS DE STATUS
+// =============================================================
+function configurarAbas() {
+  const botoes = document.querySelectorAll('.aba-btn');
+
+  // Preenche os badges com contagens absolutas (do total sem filtro de status)
+  function atualizarBadgesAbas() {
+    const dadosComTipo = todosDados.filter(function(d) {
+      return filtroTipoAtivo === "" || d.tipo === filtroTipoAtivo;
+    });
+
+    const contagens = { "": 0, "Aberta": 0, "Em análise": 0, "Encerrada": 0 };
+    dadosComTipo.forEach(function(d) {
+      contagens[""]++;
+      if (contagens[d.status] !== undefined) contagens[d.status]++;
+    });
+
+    document.getElementById('badge-todos').textContent     = contagens[""];
+    document.getElementById('badge-aberta').textContent    = contagens["Aberta"];
+    document.getElementById('badge-analise').textContent   = contagens["Em análise"];
+    document.getElementById('badge-encerrada').textContent = contagens["Encerrada"];
+  }
+
+  botoes.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      botoes.forEach(function(b) { b.classList.remove('ativa'); });
+      this.classList.add('ativa');
+
+      filtroStatusAtivo = this.dataset.status;
+      atualizarVisualizacao();
+    });
+  });
+
+  // Expõe a função para ser chamada quando o filtro de tipo mudar
+  window._atualizarBadgesAbas = atualizarBadgesAbas;
+}
+
+// =============================================================
+// 12. PAINEL ESQUERDO: RESUMO GERAL POR TIPO E BAIRRO
 // =============================================================
 function atualizarPainel(dados) {
   document.getElementById('total-ocorrencias').textContent = dados.length;
 
-  // --- Contagem por tipo ---
+  // Contagem por tipo
   const contagemTipo = {};
   dados.forEach(function(d) {
     contagemTipo[d.tipo] = (contagemTipo[d.tipo] || 0) + 1;
   });
 
-  const tiposOrdenados = Object.entries(contagemTipo)
-    .sort((a, b) => b[1] - a[1]);
-
+  const tiposOrdenados = Object.entries(contagemTipo).sort((a, b) => b[1] - a[1]);
   const maxQtd = tiposOrdenados.length > 0 ? tiposOrdenados[0][1] : 1;
 
   const insightContainer = document.getElementById('insight-tipos');
@@ -246,14 +354,13 @@ function atualizarPainel(dados) {
     insightContainer.innerHTML = '<p style="font-size:12px; color:#999; text-align:center; padding:10px 0;">Nenhuma ocorrência</p>';
   }
 
-  // --- Contagem por bairro ---
+  // Contagem por bairro
   const contagemBairro = {};
   dados.forEach(function(d) {
     contagemBairro[d.bairro] = (contagemBairro[d.bairro] || 0) + 1;
   });
 
-  const bairrosOrdenados = Object.entries(contagemBairro)
-    .sort((a, b) => b[1] - a[1]);
+  const bairrosOrdenados = Object.entries(contagemBairro).sort((a, b) => b[1] - a[1]);
 
   const bairroContainer = document.getElementById('insight-bairros');
   bairroContainer.innerHTML = '';
@@ -270,11 +377,15 @@ function atualizarPainel(dados) {
   if (bairrosOrdenados.length === 0) {
     bairroContainer.innerHTML = '<p style="font-size:12px; color:#999; text-align:center; padding:10px 0;">Nenhuma ocorrência</p>';
   }
+
+  // Atualiza badges das abas sempre que o painel atualiza
+  if (window._atualizarBadgesAbas) {
+    window._atualizarBadgesAbas();
+  }
 }
 
 // =============================================================
-// 7b. NOVO: Atualiza o painel #insights com contagem por tipo
-// Elemento separado para demonstração clara do requisito
+// 13. PAINEL DIREITO: INSIGHTS POR TIPO (bloco #insights)
 // =============================================================
 function atualizarInsights(dados) {
   const container = document.getElementById('insights');
@@ -288,7 +399,7 @@ function atualizarInsights(dados) {
   const total = dados.length;
 
   let html = `
-    <div class="insights-titulo">📊 Ocorrências por Tipo</div>
+    <div class="insights-titulo">Ocorrências por Tipo</div>
     <div class="insights-subtitulo">${total} registro${total !== 1 ? 's' : ''} no filtro atual</div>
   `;
 
@@ -309,14 +420,14 @@ function atualizarInsights(dados) {
   });
 
   if (ordenados.length === 0) {
-    html += `<div style="color:#999; font-size:12px; text-align:center; padding:8px 0;">Sem dados</div>`;
+    html += `<div style="color:#999; font-size:12px; text-align:center; padding:8px 0;">Sem dados para o filtro</div>`;
   }
 
   container.innerHTML = html;
 }
 
 // =============================================================
-// 8. PREENCHE A LEGENDA DE CORES
+// 14. PREENCHE A LEGENDA DE CORES
 // =============================================================
 function preencherLegenda() {
   const legendaContainer = document.getElementById('legenda-cores');
@@ -333,44 +444,7 @@ function preencherLegenda() {
 }
 
 // =============================================================
-// 9. NOVO: Renderiza o bloco visual ANTES → DEPOIS
-// Demonstra o conceito de integração e transformação de dados
-// =============================================================
-function renderizarAnteDepois(exemplo) {
-  const container = document.getElementById('ante-depois');
-  if (!container || !exemplo) return;
-
-  const { bruto, transformado } = exemplo;
-
-  container.innerHTML = `
-    <div class="ad-bloco">
-      <div class="ad-label ad-label-antes">⬇ ANTES <span>(SISSEDUR — dado bruto)</span></div>
-      <div class="ad-codigo">
-        <div><span class="ad-chave">id:</span> <span class="ad-val-str">"${bruto.id_sissedur}"</span></div>
-        <div><span class="ad-chave">categoria:</span> <span class="ad-val-str">"${bruto.categoria}"</span></div>
-        <div><span class="ad-chave">endereco:</span> <span class="ad-val-str">"${bruto.endereco}"</span></div>
-        <div><span class="ad-chave">latitude:</span> <span class="ad-val-null">❌ ausente</span></div>
-        <div><span class="ad-chave">longitude:</span> <span class="ad-val-null">❌ ausente</span></div>
-      </div>
-    </div>
-
-    <div class="ad-seta">⬇ transformador.js</div>
-
-    <div class="ad-bloco">
-      <div class="ad-label ad-label-depois">✅ DEPOIS <span>(dado pronto para o mapa)</span></div>
-      <div class="ad-codigo">
-        <div><span class="ad-chave">tipo:</span> <span class="ad-val-str">"${transformado.tipo}"</span></div>
-        <div><span class="ad-chave">bairro:</span> <span class="ad-val-str">"${transformado.bairro}"</span></div>
-        <div><span class="ad-chave">latitude:</span> <span class="ad-val-num">${transformado.latitude}</span></div>
-        <div><span class="ad-chave">longitude:</span> <span class="ad-val-num">${transformado.longitude}</span></div>
-        <div><span class="ad-chave">fonte:</span> <span class="ad-val-str">"${transformado.fonte}"</span></div>
-      </div>
-    </div>
-  `;
-}
-
-// =============================================================
-// 10. HELPER: FORMATA DATA (ISO → DD/MM/AAAA)
+// 15. HELPER: FORMATA DATA (ISO → DD/MM/AAAA)
 // =============================================================
 function formatarData(dataISO) {
   if (!dataISO) return '—';
@@ -379,9 +453,7 @@ function formatarData(dataISO) {
 }
 
 // =============================================================
-// 11. PONTO DE ENTRADA PRINCIPAL
-// ATUALIZADO: carrega dados_brutos.json em vez de dados.json
-// Pipeline: fetch → transformarDados() → plotar + painel
+// 16. PONTO DE ENTRADA PRINCIPAL
 // =============================================================
 fetch('dados_brutos.json')
   .then(function(response) {
@@ -390,30 +462,28 @@ fetch('dados_brutos.json')
   })
   .then(function(dadosBrutos) {
 
-    // ── ETAPA 1: TRANSFORMAÇÃO ──────────────────────────────
-    // Converte os dados brutos do SISSEDUR para o formato do mapa
+    // Transformação via transformador.js
     todosDados = transformarDados(dadosBrutos);
 
-    // ── ETAPA 2: INICIALIZAÇÃO DO MAPA ─────────────────────
+    // Inicializa o mapa
     inicializarMapa();
 
-    // ── ETAPA 3: VISUALIZAÇÃO ──────────────────────────────
+    // Configura interações
+    configurarToggleHeatmap();
+    configurarAbas();
+
+    // Renderização inicial (sem filtros)
     plotarMarcadores(todosDados);
     preencherFiltro(todosDados);
     atualizarPainel(todosDados);
-    preencherLegenda();
-
-    // ── ETAPA 4: NOVO — INSIGHTS e ANTE/DEPOIS ─────────────
     atualizarInsights(todosDados);
-
-    const exemplo = getExemploTransformacao(dadosBrutos);
-    renderizarAnteDepois(exemplo);
+    preencherLegenda();
 
   })
   .catch(function(erro) {
     console.error('Falha ao carregar dados:', erro);
     document.getElementById('map').innerHTML = `
-      <div style="display:flex; align-items:center; justify-content:center; height:100%; flex-direction:column; gap:12px; color:#c0392b; font-family:Arial;">
+      <div style="display:flex; align-items:center; justify-content:center; height:100%; flex-direction:column; gap:12px; color:#c0392b; font-family:'Roboto',Arial;">
         <div style="font-size:40px;">⚠️</div>
         <div><strong>Erro ao carregar dados_brutos.json</strong></div>
         <div style="font-size:13px; color:#666;">Abra via servidor HTTP (ex: <code>python -m http.server</code>)<br>ou acesse diretamente pelo navegador com o arquivo local.</div>

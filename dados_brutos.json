@@ -134,5 +134,349 @@
     "categoria": "Poluição sonora",
     "data_registro": "2026-04-17",
     "status": "Encerrada"
+  },
+  {
+    "id_sissedur": "SIS-2026-018",
+    "descricao": "Edificação em área de preservação sem autorização",
+    "endereco": "Rua das Flores, 110 - Miragem, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-04-18",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-019",
+    "descricao": "Gerador a diesel ligado durante toda a noite",
+    "endereco": "Rua Principal, 55 - Miragem, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-04-18",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-020",
+    "descricao": "Terreno com vegetação seca e risco de incêndio",
+    "endereco": "Rua das Acácias, 200 - Abrantes, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-04-19",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-021",
+    "descricao": "Entulho de construção despejado em área pública",
+    "endereco": "Av. Principal, 320 - Centro, Camaçari",
+    "categoria": "Descarte irregular de lixo",
+    "data_registro": "2026-04-19",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-022",
+    "descricao": "Vendedor ambulante fixo em área proibida",
+    "endereco": "Rua da Estação, 8 - Centro, Camaçari",
+    "categoria": "Ocupação irregular",
+    "data_registro": "2026-04-20",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-023",
+    "descricao": "Ampliação de estabelecimento comercial sem alvará",
+    "endereco": "Av. Jorge Amado, 450 - Nova Camaçari, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-04-20",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-024",
+    "descricao": "Festa em residência com volume excessivo após meia-noite",
+    "endereco": "Rua das Palmeiras, 77 - Nova Camaçari, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-04-21",
+    "status": "Encerrada"
+  },
+  {
+    "id_sissedur": "SIS-2026-025",
+    "descricao": "Casa abandonada com mato e risco à segurança",
+    "endereco": "Rua Seis, 34 - Monte Gordo, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-04-21",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-026",
+    "descricao": "Sacolas de lixo doméstico descartadas em terreno baldio",
+    "endereco": "Rua Sete, 90 - Monte Gordo, Camaçari",
+    "categoria": "Descarte irregular de lixo",
+    "data_registro": "2026-04-22",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-027",
+    "descricao": "Mesas de bar tomando metade da calçada",
+    "endereco": "Rua da Praia, 200 - Arembepe, Camaçari",
+    "categoria": "Ocupação irregular",
+    "data_registro": "2026-04-22",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-028",
+    "descricao": "Garagem construída sobre recuo lateral obrigatório",
+    "endereco": "Rua das Bromélias, 14 - Portão, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-04-23",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-029",
+    "descricao": "Alto-falante de comércio voltado para rua residencial",
+    "endereco": "Rua Comercial, 88 - Portão, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-04-23",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-030",
+    "descricao": "Área industrial abandonada com acúmulo de ferragens",
+    "endereco": "Rua do Polo, 450 - Polo Industrial, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-04-24",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-031",
+    "descricao": "Embalagens químicas descartadas em beira de estrada",
+    "endereco": "Estrada do Polo, 600 - Polo Industrial, Camaçari",
+    "categoria": "Descarte irregular de lixo",
+    "data_registro": "2026-04-24",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-032",
+    "descricao": "Depósito improvisado em calçada pública",
+    "endereco": "Av. São Cristóvão, 1100 - Phoc II, Camaçari",
+    "categoria": "Ocupação irregular",
+    "data_registro": "2026-04-25",
+    "status": "Encerrada"
+  },
+  {
+    "id_sissedur": "SIS-2026-033",
+    "descricao": "Cobertura metálica instalada sobre via pública",
+    "endereco": "Rua da Saudade, 19 - Centro, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-04-25",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-034",
+    "descricao": "Som mecânico em frente a residências às 6h da manhã",
+    "endereco": "Rua Oito, 43 - Gleba C, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-04-26",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-035",
+    "descricao": "Lote com piscina sem manutenção e proliferação de mosquitos",
+    "endereco": "Rua das Orquídeas, 72 - Miragem, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-04-26",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-036",
+    "descricao": "Restos de obras espalhados em frente a escola",
+    "endereco": "Rua da Escola, 5 - Abrantes, Camaçari",
+    "categoria": "Descarte irregular de lixo",
+    "data_registro": "2026-04-27",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-037",
+    "descricao": "Quiosque de praia fora dos limites permitidos",
+    "endereco": "Orla de Arembepe, s/n - Arembepe, Camaçari",
+    "categoria": "Ocupação irregular",
+    "data_registro": "2026-04-27",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-038",
+    "descricao": "Muro de arrimo construído sem projeto estrutural",
+    "endereco": "Rua do Morro, 33 - Nova Camaçari, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-04-28",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-039",
+    "descricao": "Igreja com culto amplificado até as 24h",
+    "endereco": "Rua da Fé, 120 - Monte Gordo, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-04-28",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-040",
+    "descricao": "Prédio comercial desocupado com estrutura precária",
+    "endereco": "Av. Central, 800 - Centro, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-04-29",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-041",
+    "descricao": "Colchões velhos depositados em lote baldio",
+    "endereco": "Rua Quatro, 61 - Portão, Camaçari",
+    "categoria": "Descarte irregular de lixo",
+    "data_registro": "2026-04-29",
+    "status": "Encerrada"
+  },
+  {
+    "id_sissedur": "SIS-2026-042",
+    "descricao": "Trailer de alimentação instalado em área verde",
+    "endereco": "Praça das Amendoeiras, s/n - Phoc II, Camaçari",
+    "categoria": "Ocupação irregular",
+    "data_registro": "2026-04-30",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-043",
+    "descricao": "Segundo pavimento erguido sem licença",
+    "endereco": "Rua Cinco, 150 - Gleba C, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-04-30",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-044",
+    "descricao": "Sirene industrial acionada fora do horário permitido",
+    "endereco": "Rua do Polo Norte, 700 - Polo Industrial, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-05-01",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-045",
+    "descricao": "Depósito de sucata abandonado com risco de acidente",
+    "endereco": "Rua Industrial, 22 - Polo Industrial, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-05-01",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-046",
+    "descricao": "Lixo hospitalar descartado em container comum",
+    "endereco": "Rua da Saúde, 44 - Centro, Camaçari",
+    "categoria": "Descarte irregular de lixo",
+    "data_registro": "2026-05-02",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-047",
+    "descricao": "Cabine fotográfica comercial em espaço público não autorizado",
+    "endereco": "Calçadão Central, s/n - Centro, Camaçari",
+    "categoria": "Ocupação irregular",
+    "data_registro": "2026-05-02",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-048",
+    "descricao": "Piscina construída sobre área de recuo frontal",
+    "endereco": "Rua das Conchas, 9 - Arembepe, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-05-03",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-049",
+    "descricao": "Ensaio de banda em galpão residencial após as 23h",
+    "endereco": "Rua Nova, 88 - Nova Camaçari, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-05-03",
+    "status": "Encerrada"
+  },
+  {
+    "id_sissedur": "SIS-2026-050",
+    "descricao": "Imóvel sem uso com acúmulo de água parada",
+    "endereco": "Travessa da Prainha, 6 - Abrantes, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-05-04",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-051",
+    "descricao": "Descarte de móveis velhos na entrada do bairro",
+    "endereco": "Av. de Acesso, 300 - Abrantes, Camaçari",
+    "categoria": "Descarte irregular de lixo",
+    "data_registro": "2026-05-04",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-052",
+    "descricao": "Estande de vendas em passeio público sem autorização",
+    "endereco": "Rua Comercial Norte, 55 - Miragem, Camaçari",
+    "categoria": "Ocupação irregular",
+    "data_registro": "2026-05-04",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-053",
+    "descricao": "Muro construído acima da altura máxima permitida",
+    "endereco": "Rua Dez, 190 - Phoc II, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-05-05",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-054",
+    "descricao": "Trio elétrico em evento não autorizado durante semana",
+    "endereco": "Praça da Juventude, s/n - Portão, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-05-05",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-055",
+    "descricao": "Terreno com estrutura antiga em colapso",
+    "endereco": "Rua da Paz, 77 - Portão, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-05-05",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-056",
+    "descricao": "Resíduos de poda descartados irregularmente na rua",
+    "endereco": "Rua das Árvores, 14 - Miragem, Camaçari",
+    "categoria": "Descarte irregular de lixo",
+    "data_registro": "2026-05-06",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-057",
+    "descricao": "Ambulante com estrutura fixa em frente à UBS",
+    "endereco": "Rua da UBS, 3 - Monte Gordo, Camaçari",
+    "categoria": "Ocupação irregular",
+    "data_registro": "2026-05-06",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-058",
+    "descricao": "Construção de lavanderia no recuo lateral sem projeto",
+    "endereco": "Rua Onze, 208 - Gleba C, Camaçari",
+    "categoria": "Obra irregular",
+    "data_registro": "2026-05-06",
+    "status": "Em análise"
+  },
+  {
+    "id_sissedur": "SIS-2026-059",
+    "descricao": "Compressor industrial operando fora do horário comercial",
+    "endereco": "Rua do Polo Sul, 115 - Polo Industrial, Camaçari",
+    "categoria": "Poluição sonora",
+    "data_registro": "2026-05-07",
+    "status": "Aberta"
+  },
+  {
+    "id_sissedur": "SIS-2026-060",
+    "descricao": "Antiga fábrica desativada sem cercamento de segurança",
+    "endereco": "Av. Industrial, 1500 - Polo Industrial, Camaçari",
+    "categoria": "Terreno abandonado",
+    "data_registro": "2026-05-07",
+    "status": "Aberta"
   }
 ]
