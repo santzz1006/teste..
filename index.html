@@ -11,15 +11,11 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin="" />
 
-  <!-- Fontes modernas -->
+  <!-- Fontes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
-  <!-- Estilos principais -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -67,7 +63,7 @@
       </div>
       <div class="splash-pct" id="splash-pct">0%</div>
     </div>
-    <div class="splash-footer">Prefeitura Municipal de Camaçari · SEDUR · v4.0</div>
+    <div class="splash-footer">Prefeitura Municipal de Camaçari · SEDUR · v5.0</div>
   </div>
 
 
@@ -112,14 +108,23 @@
           <div class="counter-dot"></div>
           <span>Carregando...</span>
         </div>
+
+        <!-- BOTÃO TELA CHEIA -->
+        <button class="btn-fullscreen" id="btn-fullscreen" title="Alternar tela cheia">
+          <svg id="icon-expand" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          <svg id="icon-compress" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
+          <span id="label-fullscreen">Tela Cheia</span>
+        </button>
       </div>
     </header>
 
-    <!-- LAYOUT PRINCIPAL -->
+    <!-- LAYOUT PRINCIPAL: 3 COLUNAS -->
     <div class="main-layout">
 
-      <!-- PAINEL LATERAL ESQUERDO -->
-      <aside class="painel-lateral">
+      <!-- ═══════════════════════════════════════
+           SIDEBAR ESQUERDA — Filtros + Totalizadores
+      ═══════════════════════════════════════ -->
+      <aside class="painel-lateral" id="painel-esquerdo">
 
         <!-- CARD TOTAL OCORRÊNCIAS -->
         <div class="metric-card">
@@ -180,13 +185,86 @@
           <div id="insight-tipos"></div>
         </div>
 
-        <!-- POR BAIRRO PRINCIPAL -->
+        <!-- POR BAIRRO SEDE -->
         <div class="panel-section">
           <div class="section-header">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Bairros — Sede
           </div>
           <div id="insight-bairros"></div>
+        </div>
+
+        <div class="painel-footer">
+          Integração SISSEDUR · Prefeitura de Camaçari / SEDUR
+        </div>
+      </aside>
+
+      <!-- ═══════════════════════════════════════
+           COLUNA CENTRAL — Mapa + Painel Inferior
+      ═══════════════════════════════════════ -->
+      <div class="center-column">
+        <div id="map"></div>
+
+        <!-- PAINEL INFERIOR — sempre visível -->
+        <div id="painel-inferior" class="painel-inferior">
+          <div class="pi-header">
+            <div class="pi-header-left">
+              <div class="pi-header-dot"></div>
+              <span class="pi-header-title">Ocorrência Selecionada</span>
+              <span class="pi-header-sub">e as 2 mais próximas geograficamente</span>
+            </div>
+            <button class="pi-close-btn" id="btn-fechar-painel" title="Limpar seleção">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+
+          <!-- Empty State — visível enquanto nenhuma ocorrência estiver selecionada -->
+          <div id="pi-empty-state" class="pi-empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p>Nenhuma ocorrência selecionada. Clique em um ponto no mapa para visualizar os detalhes e as ocorrências próximas.</p>
+          </div>
+
+          <!-- Cards — exibidos ao selecionar uma ocorrência -->
+          <div class="pi-cards" id="pi-cards-container" style="display:none">
+            <!-- Card 1 — Ocorrência principal -->
+            <div class="pi-card pi-card--selected" id="pi-card-0">
+              <div class="pi-card-tag">Selecionada</div>
+              <div class="pi-card-content" id="pi-card-0-content">—</div>
+            </div>
+            <!-- Card 2 — 1ª mais próxima -->
+            <div class="pi-card pi-card--nearby" id="pi-card-1">
+              <div class="pi-card-tag pi-card-tag--nearby">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                1ª Mais Próxima
+              </div>
+              <div class="pi-card-dist" id="pi-card-1-dist">—</div>
+              <div class="pi-card-content" id="pi-card-1-content">—</div>
+            </div>
+            <!-- Card 3 — 2ª mais próxima -->
+            <div class="pi-card pi-card--nearby" id="pi-card-2">
+              <div class="pi-card-tag pi-card-tag--nearby">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                2ª Mais Próxima
+              </div>
+              <div class="pi-card-dist" id="pi-card-2-dist">—</div>
+              <div class="pi-card-content" id="pi-card-2-content">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           SIDEBAR DIREITA — Legenda + Externos
+      ═══════════════════════════════════════ -->
+      <aside class="painel-direito" id="painel-direito">
+
+        <!-- LEGENDA -->
+        <div class="panel-section">
+          <div class="section-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Legenda
+          </div>
+          <div id="legenda-cores"></div>
         </div>
 
         <!-- BAIRROS EXTERNOS -->
@@ -199,25 +277,25 @@
           <div id="insight-bairros-externos"></div>
         </div>
 
-        <!-- LEGENDA -->
+        <!-- MINI-STATS: STATUS -->
         <div class="panel-section">
           <div class="section-header">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Legenda
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Distribuição de Status
           </div>
-          <div id="legenda-cores"></div>
+          <div class="status-donut-wrap">
+            <canvas id="status-donut" width="100" height="100"></canvas>
+            <div class="donut-legend" id="donut-legend"></div>
+          </div>
         </div>
 
         <div class="painel-footer">
-          Integração SISSEDUR · Prefeitura de Camaçari / SEDUR
+          Camaçari na Mão · v5.0
         </div>
       </aside>
 
-      <!-- MAPA -->
-      <div id="map"></div>
-
-    </div>
-  </div>
+    </div><!-- /.main-layout -->
+  </div><!-- /#app -->
 
   <!-- SCRIPTS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
